@@ -4,7 +4,7 @@ use std::io::Write;
 
 pub mod color_model;
 pub mod spec;
-use self::color_model::{ColorModel, ModelBPP};
+use self::color_model::{ColorModel, DatatypeCode, ModelBPP};
 use self::spec::{TgaFooter, TgaHeader};
 
 // implementation goal
@@ -14,7 +14,6 @@ use self::spec::{TgaFooter, TgaHeader};
 // bool TGAImage::unload_rle_data(std::ofstream &out)
 // bool TGAImage::write_tga_file(const char *filename, bool rle) - missing the rle part
 // TGAColor TGAImage::get(int x, int y
-// int TGAImage::get_bytespp()
 // bool TGAImage::flip_horizontally()
 // bool TGAImage::flip_vertically()
 // unsigned char *TGAImage::buffer() - returns the data
@@ -46,6 +45,10 @@ impl<T: ColorModel + Clone> TgaImage<T> {
         self.height
     }
 
+    pub fn get_bytespp(&self) -> u8 {
+        self.bytespp as u8
+    }
+
     pub fn set(&mut self, x: u16, y: u16, color: T) -> Result<(), String> {
         self.data[(y + x * self.width) as usize] = color;
         Ok(())
@@ -57,17 +60,13 @@ impl<T: ColorModel + Clone> TgaImage<T> {
         // Write header
         let mut tga_header = TgaHeader::new();
         tga_header.datatypecode = match self.bytespp {
-            ModelBPP::GRAYSCALE => 3,
-            ModelBPP::RGB => 2,
-            ModelBPP::RGBA => 2,
+            ModelBPP::GRAYSCALE => DatatypeCode::UncompressedBlackAndWhiteImage.into_u8(),
+            ModelBPP::RGB => DatatypeCode::UncompressedTrueColorImage.into_u8(),
+            ModelBPP::RGBA => DatatypeCode::UncompressedTrueColorImage.into_u8(),
         };
         tga_header.width = self.width;
         tga_header.height = self.height;
-        tga_header.bitsperpixel = match self.bytespp {
-            ModelBPP::GRAYSCALE => 8,
-            ModelBPP::RGB => 24,
-            ModelBPP::RGBA => 32,
-        };
+        tga_header.bitsperpixel = self.get_bytespp() << 3;
         tga_header.write(&mut file)?;
 
         // Write data

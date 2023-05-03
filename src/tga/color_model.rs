@@ -5,6 +5,30 @@ pub enum ModelBPP {
     RGBA = 4,
 }
 
+pub enum DatatypeCode {
+    NoImageDataIncluded,
+    UncompressedColorMappedImage,
+    UncompressedTrueColorImage,
+    UncompressedBlackAndWhiteImage,
+    RunLengthEncodedColorMappedImage,
+    RunLengthEncodedTrueColorImage,
+    RunLengthEncodedBlackAndWhiteImage,
+}
+
+impl DatatypeCode {
+    pub fn into_u8(self) -> u8 {
+        match self {
+            DatatypeCode::NoImageDataIncluded => 0,
+            DatatypeCode::UncompressedColorMappedImage => 1,
+            DatatypeCode::UncompressedTrueColorImage => 2,
+            DatatypeCode::UncompressedBlackAndWhiteImage => 3,
+            DatatypeCode::RunLengthEncodedColorMappedImage => 9,
+            DatatypeCode::RunLengthEncodedTrueColorImage => 10,
+            DatatypeCode::RunLengthEncodedBlackAndWhiteImage => 11,
+        }
+    }
+}
+
 pub trait ColorModel {
     fn new() -> Self;
     const BYTES_PER_PIXEL: ModelBPP;
