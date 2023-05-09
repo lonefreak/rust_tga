@@ -13,9 +13,6 @@ use self::spec::{TgaFooter, TgaHeader};
 // bool TGAImage::load_rle_data(std::ifstream &in)
 // bool TGAImage::unload_rle_data(std::ofstream &out)
 // bool TGAImage::write_tga_file(const char *filename, bool rle) - missing the rle part
-// TGAColor TGAImage::get(int x, int y
-// bool TGAImage::flip_horizontally()
-// bool TGAImage::flip_vertically()
 // unsigned char *TGAImage::buffer() - returns the data
 // bool TGAImage::scale(int w, int h)
 // void TGAImage::clear()
@@ -50,8 +47,24 @@ impl<T: ColorModel + Clone> TgaImage<T> {
     }
 
     pub fn set(&mut self, x: u16, y: u16, color: T) -> Result<(), String> {
+        if x >= self.height || y >= self.width {
+            return Err(format!(
+                "x or y out of bounds: x={}, y={}, width={}, height={}",
+                x, y, self.width, self.height
+            ));
+        }
         self.data[(y + x * self.width) as usize] = color;
         Ok(())
+    }
+
+    pub fn get(&self, x: u16, y: u16) -> Result<T, String> {
+        if x >= self.height || y >= self.width {
+            return Err(format!(
+                "x or y out of bounds: x={}, y={}, width={}, height={}",
+                x, y, self.width, self.height
+            ));
+        }
+        Ok(self.data[(y + x * self.width) as usize].clone())
     }
 
     pub fn write_tga_file(&self, filename: &str) -> Result<(), String> {
@@ -80,6 +93,39 @@ impl<T: ColorModel + Clone> TgaImage<T> {
         let tga_footer = TgaFooter::new();
         tga_footer.write(&mut file)?;
 
+        Ok(())
+    }
+
+    pub fn flip_horizontally(&mut self) -> Result<(), String> {
+        if self.data.len() == 0 {
+            return Err(format!("No image data found"));
+        }
+        let half = self.height >> 1; // height / 2 ^1
+        for x in 0..half {
+            for y in 0..self.width {
+                let color1: T = self.get(x, y).unwrap();
+                let color2: T = self.get(self.height - 1 - x, y).unwrap();
+                self.set(x, y, color2)?;
+                self.set(self.height - 1 - x, y, color1)?;
+            }
+        }
+        Ok(())
+    }
+
+    pub fn flip_vertically(&mut self) -> Result<(), String> {
+        if self.data.len() == 0 {
+            return Err(format!("No image data found"));
+        }
+        let half = self.width >> 1; // width / 2 ^1
+        for x in 0..self.height {
+            for y in 0..half {
+                println!("{},{} => {},{}", x, y, x, self.width - 1 - y);
+                let color1: T = self.get(x, y).unwrap();
+                let color2: T = self.get(x, self.width - 1 - y).unwrap();
+                self.set(x, y, color2)?;
+                self.set(x, self.width - 1 - y, color1)?;
+            }
+        }
         Ok(())
     }
 

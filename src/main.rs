@@ -61,38 +61,46 @@ fn main() {
     //     Err(e) => println!("Error: {}", e),
     // }
 
-    let mut heart: TgaImage<RGB> = TgaImage::new(15, 15);
+    let mut heart: TgaImage<RGB> = TgaImage::new(15, 30);
     match draw_heart(&mut heart) {
         Ok(_) => println!("Successfully drew heart!"),
         Err(e) => println!("Error: {}", e),
     }
     let filename = format!("./out/output-heart-{}.tga", &timestamp);
+    match heart.flip_vertically() {
+        Err(_) => panic!("Something went wrong"),
+        Ok(_) => println!("Successfully flipped image vertically!"),
+    }
+    match heart.flip_horizontally() {
+        Err(_) => panic!("Something went wrong"),
+        Ok(_) => println!("Successfully flipped image horizontally!"),
+    }
     match heart.write_tga_file(&filename) {
         Ok(_) => println!("Successfully wrote heart file!"),
         Err(e) => println!("Error: {}", e),
     }
 
-    let mut heart: TgaImage<RGBA> = TgaImage::new(15, 15);
-    match draw_rgba_heart(&mut heart) {
-        Ok(_) => println!("Successfully drew heart!"),
-        Err(e) => println!("Error: {}", e),
-    }
-    let filename = format!("./out/output-heart-rgba-{}.tga", &timestamp);
-    match heart.write_tga_file(&filename) {
-        Ok(_) => println!("Successfully wrote heart file!"),
-        Err(e) => println!("Error: {}", e),
-    }
+    // let mut heart: TgaImage<RGBA> = TgaImage::new(15, 15);
+    // match draw_rgba_heart(&mut heart) {
+    //     Ok(_) => println!("Successfully drew heart!"),
+    //     Err(e) => println!("Error: {}", e),
+    // }
+    // let filename = format!("./out/output-heart-rgba-{}.tga", &timestamp);
+    // match heart.write_tga_file(&filename) {
+    //     Ok(_) => println!("Successfully wrote heart file!"),
+    //     Err(e) => println!("Error: {}", e),
+    // }
 
-    let mut heart: TgaImage<Grayscale> = TgaImage::new(15, 15);
-    match draw_grayscale_heart(&mut heart) {
-        Ok(_) => println!("Successfully drew heart!"),
-        Err(e) => println!("Error: {}", e),
-    }
-    let filename = format!("./out/output-heart-grayscale-{}.tga", &timestamp);
-    match heart.write_tga_file(&filename) {
-        Ok(_) => println!("Successfully wrote heart file!"),
-        Err(e) => println!("Error: {}", e),
-    }
+    // let mut heart: TgaImage<Grayscale> = TgaImage::new(15, 15);
+    // match draw_grayscale_heart(&mut heart) {
+    //     Ok(_) => println!("Successfully drew heart!"),
+    //     Err(e) => println!("Error: {}", e),
+    // }
+    // let filename = format!("./out/output-heart-grayscale-{}.tga", &timestamp);
+    // match heart.write_tga_file(&filename) {
+    //     Ok(_) => println!("Successfully wrote heart file!"),
+    //     Err(e) => println!("Error: {}", e),
+    // }
 }
 
 struct RGBPixels {}
@@ -123,73 +131,73 @@ impl RGBPixels {
     }
 }
 
-struct RGBAPixels {}
+// struct RGBAPixels {}
 
-impl RGBAPixels {
-    fn new() -> Self {
-        RGBAPixels {}
-    }
+// impl RGBAPixels {
+//     fn new() -> Self {
+//         RGBAPixels {}
+//     }
 
-    fn w(&self) -> RGBA {
-        RGBA {
-            r: 255,
-            g: 255,
-            b: 255,
-            a: 255,
-        }
-    }
+//     fn w(&self) -> RGBA {
+//         RGBA {
+//             r: 255,
+//             g: 255,
+//             b: 255,
+//             a: 255,
+//         }
+//     }
 
-    fn r(&self) -> RGBA {
-        RGBA {
-            r: 0,
-            g: 0,
-            b: 255,
-            a: 130,
-        }
-    }
+//     fn r(&self) -> RGBA {
+//         RGBA {
+//             r: 0,
+//             g: 0,
+//             b: 255,
+//             a: 130,
+//         }
+//     }
 
-    fn b(&self) -> RGBA {
-        RGBA {
-            r: 0,
-            g: 0,
-            b: 0,
-            a: 255,
-        }
-    }
+//     fn b(&self) -> RGBA {
+//         RGBA {
+//             r: 0,
+//             g: 0,
+//             b: 0,
+//             a: 255,
+//         }
+//     }
 
-    fn d(&self) -> RGBA {
-        RGBA {
-            r: 0,
-            g: 0,
-            b: 139,
-            a: 200,
-        }
-    }
-}
+//     fn d(&self) -> RGBA {
+//         RGBA {
+//             r: 0,
+//             g: 0,
+//             b: 139,
+//             a: 200,
+//         }
+//     }
+// }
 
-struct GrayscalePixels {}
+// struct GrayscalePixels {}
 
-impl GrayscalePixels {
-    fn new() -> Self {
-        GrayscalePixels {}
-    }
+// impl GrayscalePixels {
+//     fn new() -> Self {
+//         GrayscalePixels {}
+//     }
 
-    fn w(&self) -> Grayscale {
-        Grayscale { c: 255 }
-    }
+//     fn w(&self) -> Grayscale {
+//         Grayscale { c: 255 }
+//     }
 
-    fn r(&self) -> Grayscale {
-        Grayscale { c: 155 }
-    }
+//     fn r(&self) -> Grayscale {
+//         Grayscale { c: 155 }
+//     }
 
-    fn b(&self) -> Grayscale {
-        Grayscale { c: 0 }
-    }
+//     fn b(&self) -> Grayscale {
+//         Grayscale { c: 0 }
+//     }
 
-    fn d(&self) -> Grayscale {
-        Grayscale { c: 95 }
-    }
-}
+//     fn d(&self) -> Grayscale {
+//         Grayscale { c: 95 }
+//     }
+// }
 
 fn _generate_random_grayscale_pixel(image: &mut TgaImage<Grayscale>) -> Result<(), String> {
     let mut rng = rand::thread_rng();
@@ -525,651 +533,672 @@ fn draw_heart(image: &mut TgaImage<RGB>) -> Result<(), String> {
     ];
     draw_line(&pixels, image, 14);
 
-    Ok(())
-}
-
-fn draw_rgba_heart(image: &mut TgaImage<RGBA>) -> Result<(), String> {
-    //WWWWWWWWWWWWWWW
-    let pixel = RGBAPixels::new();
     let pixels = [
         pixel.w(),
         pixel.w(),
         pixel.w(),
         pixel.w(),
         pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-    ];
-    draw_rgba_line(&pixels, image, 0);
-
-    //WWW...WWW...WWW
-    let pixels = [
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.b(),
-        pixel.b(),
         pixel.b(),
         pixel.w(),
         pixel.w(),
-        pixel.w(),
-        pixel.b(),
-        pixel.b(),
         pixel.b(),
         pixel.w(),
         pixel.w(),
-        pixel.w(),
-    ];
-    draw_rgba_line(&pixels, image, 1);
-
-    //WWBRRRBWBRRDBWW
-    let pixels = [
-        pixel.w(),
-        pixel.w(),
-        pixel.b(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.b(),
-        pixel.w(),
-        pixel.b(),
-        pixel.r(),
-        pixel.r(),
         pixel.d(),
-        pixel.b(),
-        pixel.w(),
-        pixel.w(),
-    ];
-    draw_rgba_line(&pixels, image, 2);
-
-    // W.RWWRR.RRRRD.W
-    let pixels = [
-        pixel.w(),
-        pixel.b(),
-        pixel.r(),
-        pixel.w(),
-        pixel.w(),
-        pixel.r(),
-        pixel.r(),
-        pixel.b(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
         pixel.d(),
-        pixel.b(),
-        pixel.w(),
-    ];
-    draw_rgba_line(&pixels, image, 3);
-
-    // W.RWRRRRRRRRD.W
-    let pixels = [
-        pixel.w(),
-        pixel.b(),
-        pixel.r(),
-        pixel.w(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
         pixel.d(),
-        pixel.b(),
         pixel.w(),
     ];
-    draw_rgba_line(&pixels, image, 4);
-
-    // W.RRRRRRRRRRD.W
-    let pixels = [
-        pixel.w(),
-        pixel.b(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.d(),
-        pixel.b(),
-        pixel.w(),
-    ];
-    draw_rgba_line(&pixels, image, 5);
-
-    // W.RWRRRRRRRRD.W
-    let pixels = [
-        pixel.w(),
-        pixel.b(),
-        pixel.r(),
-        pixel.w(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.d(),
-        pixel.b(),
-        pixel.w(),
-    ];
-    draw_rgba_line(&pixels, image, 6);
-
-    // WBRRRRRRRRRRDBW
-    let pixels = [
-        pixel.w(),
-        pixel.b(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.d(),
-        pixel.b(),
-        pixel.w(),
-    ];
-    draw_rgba_line(&pixels, image, 7);
-
-    // WWBRRRRRRRRDBWW
-    let pixels = [
-        pixel.w(),
-        pixel.w(),
-        pixel.b(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.d(),
-        pixel.b(),
-        pixel.w(),
-        pixel.w(),
-    ];
-    draw_rgba_line(&pixels, image, 8);
-
-    // WWWBRRRRRRDBWWW
-    let pixels = [
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.b(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.d(),
-        pixel.b(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-    ];
-    draw_rgba_line(&pixels, image, 9);
-
-    // WWWWBRRRRDBWWWW
-    let pixels = [
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.b(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.d(),
-        pixel.b(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-    ];
-    draw_rgba_line(&pixels, image, 10);
-
-    // WWWWWBRRDBWWWWW
-    let pixels = [
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.b(),
-        pixel.r(),
-        pixel.r(),
-        pixel.d(),
-        pixel.b(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-    ];
-    draw_rgba_line(&pixels, image, 11);
-
-    // WWWWWWBDBWWWWWW
-    let pixels = [
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.b(),
-        pixel.d(),
-        pixel.b(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-    ];
-    draw_rgba_line(&pixels, image, 12);
-
-    // WWWWWWW.WWWWWWW
-    let pixels = [
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.b(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-    ];
-    draw_rgba_line(&pixels, image, 13);
-
-    // WWWWWWWWWWWWWWW
-    let pixels = [
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-    ];
-    draw_rgba_line(&pixels, image, 14);
+    for i in 15..30 {
+        draw_line(&pixels, image, i);
+    }
 
     Ok(())
 }
 
-fn draw_grayscale_heart(image: &mut TgaImage<Grayscale>) -> Result<(), String> {
-    //WWWWWWWWWWWWWWW
-    let pixel = GrayscalePixels::new();
-    let pixels = [
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-    ];
-    draw_grayscale_line(&pixels, image, 0);
+// fn draw_rgba_heart(image: &mut TgaImage<RGBA>) -> Result<(), String> {
+//     //WWWWWWWWWWWWWWW
+//     let pixel = RGBAPixels::new();
+//     let pixels = [
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//     ];
+//     draw_rgba_line(&pixels, image, 0);
 
-    //WWW...WWW...WWW
-    let pixels = [
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.b(),
-        pixel.b(),
-        pixel.b(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.b(),
-        pixel.b(),
-        pixel.b(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-    ];
-    draw_grayscale_line(&pixels, image, 1);
+//     //WWW...WWW...WWW
+//     let pixels = [
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.b(),
+//         pixel.b(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.b(),
+//         pixel.b(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//     ];
+//     draw_rgba_line(&pixels, image, 1);
 
-    //WWBRRRBWBRRDBWW
-    let pixels = [
-        pixel.w(),
-        pixel.w(),
-        pixel.b(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.b(),
-        pixel.w(),
-        pixel.b(),
-        pixel.r(),
-        pixel.r(),
-        pixel.d(),
-        pixel.b(),
-        pixel.w(),
-        pixel.w(),
-    ];
-    draw_grayscale_line(&pixels, image, 2);
+//     //WWBRRRBWBRRDBWW
+//     let pixels = [
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.b(),
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.d(),
+//         pixel.b(),
+//         pixel.w(),
+//         pixel.w(),
+//     ];
+//     draw_rgba_line(&pixels, image, 2);
 
-    // W.RWWRR.RRRRD.W
-    let pixels = [
-        pixel.w(),
-        pixel.b(),
-        pixel.r(),
-        pixel.w(),
-        pixel.w(),
-        pixel.r(),
-        pixel.r(),
-        pixel.b(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.d(),
-        pixel.b(),
-        pixel.w(),
-    ];
-    draw_grayscale_line(&pixels, image, 3);
+//     // W.RWWRR.RRRRD.W
+//     let pixels = [
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.r(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.b(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.d(),
+//         pixel.b(),
+//         pixel.w(),
+//     ];
+//     draw_rgba_line(&pixels, image, 3);
 
-    // W.RWRRRRRRRRD.W
-    let pixels = [
-        pixel.w(),
-        pixel.b(),
-        pixel.r(),
-        pixel.w(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.d(),
-        pixel.b(),
-        pixel.w(),
-    ];
-    draw_grayscale_line(&pixels, image, 4);
+//     // W.RWRRRRRRRRD.W
+//     let pixels = [
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.r(),
+//         pixel.w(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.d(),
+//         pixel.b(),
+//         pixel.w(),
+//     ];
+//     draw_rgba_line(&pixels, image, 4);
 
-    // W.RRRRRRRRRRD.W
-    let pixels = [
-        pixel.w(),
-        pixel.b(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.d(),
-        pixel.b(),
-        pixel.w(),
-    ];
-    draw_grayscale_line(&pixels, image, 5);
+//     // W.RRRRRRRRRRD.W
+//     let pixels = [
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.d(),
+//         pixel.b(),
+//         pixel.w(),
+//     ];
+//     draw_rgba_line(&pixels, image, 5);
 
-    // W.RWRRRRRRRRD.W
-    let pixels = [
-        pixel.w(),
-        pixel.b(),
-        pixel.r(),
-        pixel.w(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.d(),
-        pixel.b(),
-        pixel.w(),
-    ];
-    draw_grayscale_line(&pixels, image, 6);
+//     // W.RWRRRRRRRRD.W
+//     let pixels = [
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.r(),
+//         pixel.w(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.d(),
+//         pixel.b(),
+//         pixel.w(),
+//     ];
+//     draw_rgba_line(&pixels, image, 6);
 
-    // WBRRRRRRRRRRDBW
-    let pixels = [
-        pixel.w(),
-        pixel.b(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.d(),
-        pixel.b(),
-        pixel.w(),
-    ];
-    draw_grayscale_line(&pixels, image, 7);
+//     // WBRRRRRRRRRRDBW
+//     let pixels = [
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.d(),
+//         pixel.b(),
+//         pixel.w(),
+//     ];
+//     draw_rgba_line(&pixels, image, 7);
 
-    // WWBRRRRRRRRDBWW
-    let pixels = [
-        pixel.w(),
-        pixel.w(),
-        pixel.b(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.d(),
-        pixel.b(),
-        pixel.w(),
-        pixel.w(),
-    ];
-    draw_grayscale_line(&pixels, image, 8);
+//     // WWBRRRRRRRRDBWW
+//     let pixels = [
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.d(),
+//         pixel.b(),
+//         pixel.w(),
+//         pixel.w(),
+//     ];
+//     draw_rgba_line(&pixels, image, 8);
 
-    // WWWBRRRRRRDBWWW
-    let pixels = [
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.b(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.d(),
-        pixel.b(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-    ];
-    draw_grayscale_line(&pixels, image, 9);
+//     // WWWBRRRRRRDBWWW
+//     let pixels = [
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.d(),
+//         pixel.b(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//     ];
+//     draw_rgba_line(&pixels, image, 9);
 
-    // WWWWBRRRRDBWWWW
-    let pixels = [
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.b(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.r(),
-        pixel.d(),
-        pixel.b(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-    ];
-    draw_grayscale_line(&pixels, image, 10);
+//     // WWWWBRRRRDBWWWW
+//     let pixels = [
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.d(),
+//         pixel.b(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//     ];
+//     draw_rgba_line(&pixels, image, 10);
 
-    // WWWWWBRRDBWWWWW
-    let pixels = [
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.b(),
-        pixel.r(),
-        pixel.r(),
-        pixel.d(),
-        pixel.b(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-    ];
-    draw_grayscale_line(&pixels, image, 11);
+//     // WWWWWBRRDBWWWWW
+//     let pixels = [
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.d(),
+//         pixel.b(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//     ];
+//     draw_rgba_line(&pixels, image, 11);
 
-    // WWWWWWBDBWWWWWW
-    let pixels = [
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.b(),
-        pixel.d(),
-        pixel.b(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-    ];
-    draw_grayscale_line(&pixels, image, 12);
+//     // WWWWWWBDBWWWWWW
+//     let pixels = [
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.d(),
+//         pixel.b(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//     ];
+//     draw_rgba_line(&pixels, image, 12);
 
-    // WWWWWWW.WWWWWWW
-    let pixels = [
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.b(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-    ];
-    draw_grayscale_line(&pixels, image, 13);
+//     // WWWWWWW.WWWWWWW
+//     let pixels = [
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//     ];
+//     draw_rgba_line(&pixels, image, 13);
 
-    // WWWWWWWWWWWWWWW
-    let pixels = [
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-        pixel.w(),
-    ];
-    draw_grayscale_line(&pixels, image, 14);
+//     // WWWWWWWWWWWWWWW
+//     let pixels = [
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//     ];
+//     draw_rgba_line(&pixels, image, 14);
 
-    Ok(())
-}
+//     Ok(())
+// }
+
+// fn draw_grayscale_heart(image: &mut TgaImage<Grayscale>) -> Result<(), String> {
+//     //WWWWWWWWWWWWWWW
+//     let pixel = GrayscalePixels::new();
+//     let pixels = [
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//     ];
+//     draw_grayscale_line(&pixels, image, 0);
+
+//     //WWW...WWW...WWW
+//     let pixels = [
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.b(),
+//         pixel.b(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.b(),
+//         pixel.b(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//     ];
+//     draw_grayscale_line(&pixels, image, 1);
+
+//     //WWBRRRBWBRRDBWW
+//     let pixels = [
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.b(),
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.d(),
+//         pixel.b(),
+//         pixel.w(),
+//         pixel.w(),
+//     ];
+//     draw_grayscale_line(&pixels, image, 2);
+
+//     // W.RWWRR.RRRRD.W
+//     let pixels = [
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.r(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.b(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.d(),
+//         pixel.b(),
+//         pixel.w(),
+//     ];
+//     draw_grayscale_line(&pixels, image, 3);
+
+//     // W.RWRRRRRRRRD.W
+//     let pixels = [
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.r(),
+//         pixel.w(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.d(),
+//         pixel.b(),
+//         pixel.w(),
+//     ];
+//     draw_grayscale_line(&pixels, image, 4);
+
+//     // W.RRRRRRRRRRD.W
+//     let pixels = [
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.d(),
+//         pixel.b(),
+//         pixel.w(),
+//     ];
+//     draw_grayscale_line(&pixels, image, 5);
+
+//     // W.RWRRRRRRRRD.W
+//     let pixels = [
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.r(),
+//         pixel.w(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.d(),
+//         pixel.b(),
+//         pixel.w(),
+//     ];
+//     draw_grayscale_line(&pixels, image, 6);
+
+//     // WBRRRRRRRRRRDBW
+//     let pixels = [
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.d(),
+//         pixel.b(),
+//         pixel.w(),
+//     ];
+//     draw_grayscale_line(&pixels, image, 7);
+
+//     // WWBRRRRRRRRDBWW
+//     let pixels = [
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.d(),
+//         pixel.b(),
+//         pixel.w(),
+//         pixel.w(),
+//     ];
+//     draw_grayscale_line(&pixels, image, 8);
+
+//     // WWWBRRRRRRDBWWW
+//     let pixels = [
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.d(),
+//         pixel.b(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//     ];
+//     draw_grayscale_line(&pixels, image, 9);
+
+//     // WWWWBRRRRDBWWWW
+//     let pixels = [
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.d(),
+//         pixel.b(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//     ];
+//     draw_grayscale_line(&pixels, image, 10);
+
+//     // WWWWWBRRDBWWWWW
+//     let pixels = [
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.r(),
+//         pixel.r(),
+//         pixel.d(),
+//         pixel.b(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//     ];
+//     draw_grayscale_line(&pixels, image, 11);
+
+//     // WWWWWWBDBWWWWWW
+//     let pixels = [
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.d(),
+//         pixel.b(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//     ];
+//     draw_grayscale_line(&pixels, image, 12);
+
+//     // WWWWWWW.WWWWWWW
+//     let pixels = [
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.b(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//     ];
+//     draw_grayscale_line(&pixels, image, 13);
+
+//     // WWWWWWWWWWWWWWW
+//     let pixels = [
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//         pixel.w(),
+//     ];
+//     draw_grayscale_line(&pixels, image, 14);
+
+//     Ok(())
+// }
 
 fn draw_line(pixels: &[RGB], image: &mut TgaImage<RGB>, line: u16) {
     let mut i = 0;
     for pixel in pixels.iter() {
         match image.set(line, i, *pixel) {
-            Ok(_) => println!("Successfully wrote pixel!"),
+            Ok(_) => println!("Successfully wrote pixel on line {}!", line),
             Err(e) => println!("Error: {}", e),
         }
         i += 1;
     }
 }
 
-fn draw_rgba_line(pixels: &[RGBA], image: &mut TgaImage<RGBA>, line: u16) {
-    let mut i = 0;
-    for pixel in pixels.iter() {
-        match image.set(line, i, *pixel) {
-            Ok(_) => println!("Successfully wrote pixel!"),
-            Err(e) => println!("Error: {}", e),
-        }
-        i += 1;
-    }
-}
+// fn draw_rgba_line(pixels: &[RGBA], image: &mut TgaImage<RGBA>, line: u16) {
+//     let mut i = 0;
+//     for pixel in pixels.iter() {
+//         match image.set(line, i, *pixel) {
+//             Ok(_) => println!("Successfully wrote pixel!"),
+//             Err(e) => println!("Error: {}", e),
+//         }
+//         i += 1;
+//     }
+// }
 
-fn draw_grayscale_line(pixels: &[Grayscale], image: &mut TgaImage<Grayscale>, line: u16) {
-    let mut i = 0;
-    for pixel in pixels.iter() {
-        match image.set(line, i, *pixel) {
-            Ok(_) => println!("Successfully wrote pixel!"),
-            Err(e) => println!("Error: {}", e),
-        }
-        i += 1;
-    }
-}
+// fn draw_grayscale_line(pixels: &[Grayscale], image: &mut TgaImage<Grayscale>, line: u16) {
+//     let mut i = 0;
+//     for pixel in pixels.iter() {
+//         match image.set(line, i, *pixel) {
+//             Ok(_) => println!("Successfully wrote pixel!"),
+//             Err(e) => println!("Error: {}", e),
+//         }
+//         i += 1;
+//     }
+// }
 
 /*
 WWWWWWWWWWWWWWW
