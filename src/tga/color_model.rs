@@ -35,47 +35,72 @@ pub trait ColorModel {
 }
 
 #[derive(Copy, Clone)]
+#[allow(dead_code)]
 pub struct Grayscale {
-    pub c: u8,
+    c: u8,
+}
+
+impl Grayscale {
+    pub fn set(shade: u8) -> Self {
+        Grayscale { c: shade }
+    }
 }
 
 impl ColorModel for Grayscale {
-    fn new() -> Grayscale {
-        Grayscale { c: 0 }
+    fn new() -> Self {
+        Grayscale::set(0)
     }
     const BYTES_PER_PIXEL: ModelBPP = ModelBPP::GRAYSCALE;
 }
 
 #[derive(Copy, Clone)]
+#[allow(dead_code)]
 pub struct RGBA {
-    pub r: u8,
-    pub g: u8,
-    pub b: u8,
-    pub a: u8,
+    b: u8,
+    g: u8,
+    r: u8,
+    a: u8,
+}
+
+impl RGBA {
+    pub fn set(red: u8, green: u8, blue: u8, alpha: u8) -> Self {
+        RGBA {
+            b: blue,
+            g: green,
+            r: red,
+            a: alpha,
+        }
+    }
 }
 
 impl ColorModel for RGBA {
-    fn new() -> RGBA {
-        RGBA {
-            r: 0,
-            g: 0,
-            b: 0,
-            a: 0,
-        }
+    fn new() -> Self {
+        RGBA::set(0, 0, 0, 0)
     }
     const BYTES_PER_PIXEL: ModelBPP = ModelBPP::RGBA;
 }
 
 #[derive(Copy, Clone)]
+#[allow(dead_code)]
 pub struct RGB {
-    pub r: u8,
-    pub g: u8,
-    pub b: u8,
+    b: u8,
+    g: u8,
+    r: u8,
+}
+
+impl RGB {
+    pub fn set(red: u8, green: u8, blue: u8) -> Self {
+        RGB {
+            b: blue,
+            g: green,
+            r: red,
+        }
+    }
 }
 
 impl ColorModel for RGB {
-    fn new() -> RGB {
-        RGB { r: 0, g: 0, b: 0 }
+    fn new() -> Self {
+        RGB::set(0, 0, 0)
     }
     const BYTES_PER_PIXEL: ModelBPP = ModelBPP::RGB;
 }
