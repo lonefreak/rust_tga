@@ -1,6 +1,8 @@
 use std::fs::File;
 use std::io::Write;
 
+// https://www.dca.fee.unicamp.br/~martino/disciplinas/ea978/tgaffs.pdf
+
 pub const TGA_SIGNATURE: [u8; 18] = *b"TRUEVISION-XFILE.\0";
 #[warn(dead_code)]
 pub struct TgaHeader {

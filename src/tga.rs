@@ -10,7 +10,7 @@ use self::spec::{TgaFooter, TgaHeader};
 
 // implementation goal
 // https://github.com/ssloy/tinyrenderer/blob/909fe20934ba5334144d2c748805690a1fa4c89f/tgaimage.cpp
-// bool TGAImage::read_tga_file(const char *filename)
+// bool TGAImage::read_tga_file(const char *filename) - missing the rle part
 // bool TGAImage::load_rle_data(std::ifstream &in)
 // bool TGAImage::unload_rle_data(std::ofstream &out)
 // bool TGAImage::write_tga_file(const char *filename, bool rle) - missing the rle part
