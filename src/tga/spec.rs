@@ -1,6 +1,7 @@
 use std::fs::File;
 use std::io::Write;
 
+pub const TGA_SIGNATURE: [u8; 18] = *b"TRUEVISION-XFILE.\0";
 #[warn(dead_code)]
 pub struct TgaHeader {
     /*
@@ -117,6 +118,13 @@ pub struct TgaHeader {
     Top right-hand corner                 1       1
 
     Bits 7 & 6:  Must be zero to insure future compatibility
+
+    Binary      Hex     Screen Origin
+    00000000    0x00    Bottom Left
+    00010000    0x10    Bottom Right
+    00100000    0x20    Top Left
+    00110000    0x30    Top Right
+
     */
     pub imagedescriptor: u8,
 }
@@ -167,6 +175,22 @@ impl TgaHeader {
 
         Ok(())
     }
+
+    pub fn read(&mut self, buffer: &Vec<u8>, offset: &mut usize) -> Result<(), String> {
+        self.idlength = read_u8(buffer, offset);
+        self.colormaptype = read_u8(buffer, offset);
+        self.datatypecode = read_u8(buffer, offset);
+        self.colormaporigin = read_u16(buffer, offset);
+        self.colormaplength = read_u16(buffer, offset);
+        self.colormapdepth = read_u8(buffer, offset);
+        self.x_origin = read_u16(buffer, offset);
+        self.y_origin = read_u16(buffer, offset);
+        self.width = read_u16(buffer, offset);
+        self.height = read_u16(buffer, offset);
+        self.bitsperpixel = read_u8(buffer, offset);
+        self.imagedescriptor = read_u8(buffer, offset);
+        Ok(())
+    }
 }
 
 pub struct TgaFooter {
@@ -214,7 +238,7 @@ impl TgaFooter {
         TgaFooter {
             extensionareaoffset: 0,
             developerdirectoryoffset: 0,
-            signature: *b"TRUEVISION-XFILE.\0",
+            signature: TGA_SIGNATURE,
         }
     }
 
@@ -227,4 +251,65 @@ impl TgaFooter {
 
         Ok(())
     }
+
+    pub fn read(&mut self, buffer: &Vec<u8>) -> Result<(), String> {
+        let mut offset = buffer.len() - 26;
+
+        self.extensionareaoffset = read_u32(&buffer, &mut offset);
+        self.developerdirectoryoffset = read_u32(&buffer, &mut offset);
+        self.signature = [
+            read_u8(buffer, &mut offset),
+            read_u8(buffer, &mut offset),
+            read_u8(buffer, &mut offset),
+            read_u8(buffer, &mut offset),
+            read_u8(buffer, &mut offset),
+            read_u8(buffer, &mut offset),
+            read_u8(buffer, &mut offset),
+            read_u8(buffer, &mut offset),
+            read_u8(buffer, &mut offset),
+            read_u8(buffer, &mut offset),
+            read_u8(buffer, &mut offset),
+            read_u8(buffer, &mut offset),
+            read_u8(buffer, &mut offset),
+            read_u8(buffer, &mut offset),
+            read_u8(buffer, &mut offset),
+            read_u8(buffer, &mut offset),
+            read_u8(buffer, &mut offset),
+            read_u8(buffer, &mut offset),
+        ];
+
+        match self.is_valid() {
+            false => return Err("Invalid TGA footer".to_string()),
+            _ => (),
+        }
+
+        Ok(())
+    }
+
+    fn is_valid(&self) -> bool {
+        self.signature == TGA_SIGNATURE
+    }
+}
+
+fn read_u8(buffer: &Vec<u8>, offset: &mut usize) -> u8 {
+    let value = u8::from_le_bytes([buffer[*offset]]);
+    *offset += 1;
+    value
+}
+
+fn read_u16(buffer: &Vec<u8>, offset: &mut usize) -> u16 {
+    let value = u16::from_le_bytes([buffer[*offset], buffer[*offset + 1]]);
+    *offset += 2;
+    value
+}
+
+fn read_u32(buffer: &Vec<u8>, offset: &mut usize) -> u32 {
+    let value = u32::from_le_bytes([
+        buffer[*offset],
+        buffer[*offset + 1],
+        buffer[*offset + 2],
+        buffer[*offset + 3],
+    ]);
+    *offset += 4;
+    value
 }

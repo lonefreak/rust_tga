@@ -1,6 +1,7 @@
 use std::clone::Clone;
 use std::fs::File;
-use std::io::Write;
+use std::io::{BufReader, Read, Write};
+use std::mem::MaybeUninit;
 
 pub mod color_model;
 pub mod spec;
@@ -22,6 +23,8 @@ pub struct TgaImage<T: ColorModel> {
     height: u16,
     bytespp: ModelBPP,
     data: Vec<T>,
+    header: TgaHeader,
+    footer: TgaFooter,
 }
 
 impl<T: ColorModel + Clone> TgaImage<T> {
@@ -31,6 +34,8 @@ impl<T: ColorModel + Clone> TgaImage<T> {
             height,
             bytespp: T::BYTES_PER_PIXEL,
             data: vec![T::new(); (width * height) as usize],
+            header: TgaHeader::new(),
+            footer: TgaFooter::new(),
         }
     }
 
@@ -44,6 +49,18 @@ impl<T: ColorModel + Clone> TgaImage<T> {
 
     pub fn get_bytespp(&self) -> u8 {
         self.bytespp as u8
+    }
+
+    pub fn set_width(&mut self, width: u16) {
+        self.width = width;
+    }
+
+    pub fn set_height(&mut self, height: u16) {
+        self.height = height;
+    }
+
+    pub fn set_bytespp(&mut self, bytespp: ModelBPP) {
+        self.bytespp = bytespp;
     }
 
     pub fn set(&mut self, x: u16, y: u16, color: T) -> Result<(), String> {
@@ -67,32 +84,103 @@ impl<T: ColorModel + Clone> TgaImage<T> {
         Ok(self.data[(y + x * self.width) as usize].clone())
     }
 
-    pub fn write_tga_file(&self, filename: &str) -> Result<(), String> {
+    pub fn write_tga_file(&mut self, filename: &str) -> Result<(), String> {
         let mut file = File::create(filename).map_err(|e| e.to_string())?;
 
         // Write header
-        let mut tga_header = TgaHeader::new();
-        tga_header.datatypecode = match self.bytespp {
+        self.header.datatypecode = match self.bytespp {
             ModelBPP::GRAYSCALE => DatatypeCode::UncompressedBlackAndWhiteImage.into_u8(),
             ModelBPP::RGB => DatatypeCode::UncompressedTrueColorImage.into_u8(),
             ModelBPP::RGBA => DatatypeCode::UncompressedTrueColorImage.into_u8(),
         };
-        tga_header.width = self.width;
-        tga_header.height = self.height;
-        tga_header.bitsperpixel = self.get_bytespp() << 3;
-        tga_header.write(&mut file)?;
+        self.header.width = self.width;
+        self.header.height = self.height;
+        self.header.bitsperpixel = self.get_bytespp() << 3;
+        self.header.write(&mut file)?;
 
         // Write data
+        self.write_data(&mut file)?;
+
+        // Write footer
+        self.footer.write(&mut file)?;
+
+        Ok(())
+    }
+
+    fn write_data(&mut self, file: &mut File) -> Result<(), String> {
         for i in 0..self.data.len() {
             let color = self.data[i].clone();
             let bytes = unsafe { self.any_as_u8_slice(&color) };
             file.write_all(bytes).map_err(|e| e.to_string())?;
         }
+        Ok(())
+    }
 
-        // Write footer
-        let tga_footer = TgaFooter::new();
-        tga_footer.write(&mut file)?;
+    pub fn read_tga_file(&mut self, filename: &str) -> Result<(), String> {
+        let file: File = File::open(filename).map_err(|e| e.to_string())?;
+        let mut reader = BufReader::new(&file);
+        let mut buffer: Vec<u8> = Vec::new();
+        let mut offset = 0;
+        reader.read_to_end(&mut buffer).map_err(|e| e.to_string())?;
 
+        let mut image: TgaImage<T> = TgaImage::new(0, 0);
+        // Read footer
+        image.footer.read(&buffer)?;
+
+        // Read header
+        image.header.read(&buffer, &mut offset)?;
+
+        // Read data
+        self.width = image.header.width;
+        self.height = image.header.height;
+        self.bytespp = match image.header.bitsperpixel {
+            8 => ModelBPP::GRAYSCALE,
+            24 => ModelBPP::RGB,
+            32 => ModelBPP::RGBA,
+            _ => return Err(format!("Unsupported bpp: {}", image.header.bitsperpixel)),
+        };
+
+        self.data = vec![T::new(); (self.width * self.height) as usize];
+        match image.header.datatypecode {
+            2 | 3 => self.load_uncompressed_tga(&buffer, &mut offset)?,
+            _ => {
+                return Err(format!(
+                    "Unsupported data type: {}",
+                    image.header.datatypecode
+                ))
+            }
+        }
+
+        //Check image descriptor
+        match image.header.imagedescriptor {
+            0x00 => self.flip_vertically(),
+            0x10 => {
+                self.flip_vertically()?;
+                self.flip_horizontally()
+            }
+            0x20 => Ok(()),
+            0x30 => self.flip_horizontally(),
+            _ => {
+                return Err(format!(
+                    "Unsupported image descriptor: {}",
+                    image.header.imagedescriptor
+                ))
+            }
+        }
+    }
+
+    fn load_uncompressed_tga(
+        &mut self,
+        buffer: &Vec<u8>,
+        offset: &mut usize,
+    ) -> Result<(), String> {
+        for i in 0..self.data.len() {
+            let from = *offset;
+            let to = (*offset + self.bytespp as usize) - 1;
+            let color = unsafe { self.u8_slice_as_any(&buffer[from..=to].to_vec()) };
+            self.data[i] = color;
+            *offset += self.bytespp as usize;
+        }
         Ok(())
     }
 
@@ -119,7 +207,6 @@ impl<T: ColorModel + Clone> TgaImage<T> {
         let half = self.width >> 1; // width / 2 ^1
         for x in 0..self.height {
             for y in 0..half {
-                println!("{},{} => {},{}", x, y, x, self.width - 1 - y);
                 let color1: T = self.get(x, y).unwrap();
                 let color2: T = self.get(x, self.width - 1 - y).unwrap();
                 self.set(x, y, color2)?;
@@ -133,5 +220,16 @@ impl<T: ColorModel + Clone> TgaImage<T> {
     // https://stackoverflow.com/questions/31281201/how-to-convert-a-struct-into-a-u8-slice
     unsafe fn any_as_u8_slice<W: Sized>(&self, p: &W) -> &[u8] {
         ::core::slice::from_raw_parts((p as *const W) as *const u8, ::core::mem::size_of::<W>())
+    }
+
+    unsafe fn u8_slice_as_any<W: Sized>(&self, slice: &[u8]) -> W {
+        assert_eq!(::core::mem::size_of::<W>(), slice.len());
+        let mut out: W = MaybeUninit::uninit().assume_init();
+        ::core::ptr::copy_nonoverlapping(
+            slice.as_ptr(),
+            &mut out as *mut W as *mut u8,
+            slice.len(),
+        );
+        out
     }
 }
