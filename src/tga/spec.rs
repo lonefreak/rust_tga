@@ -315,3 +315,57 @@ fn read_u32(buffer: &Vec<u8>, offset: &mut usize) -> u32 {
     *offset += 4;
     value
 }
+
+#[test]
+fn get_u8_and_update_offset() {
+    let buffer: Vec<u8> = vec![0, 0, 1, 0];
+    let mut offset: usize = 2;
+
+    let next_byte: u8 = read_u8(&buffer, &mut offset);
+    assert_eq!(next_byte, 1);
+    assert_eq!(offset, 3);
+}
+
+#[test]
+#[should_panic]
+fn get_u8_but_out_of_bounds() {
+    let buffer: Vec<u8> = vec![0, 0, 1, 0];
+    let mut offset: usize = 4;
+    let _: u8 = read_u8(&buffer, &mut offset);
+}
+
+#[test]
+fn get_u16_and_update_offset() {
+    let buffer: Vec<u8> = vec![0, 0, 1, 1];
+    let mut offset: usize = 2;
+
+    let next_u16: u16 = read_u16(&buffer, &mut offset);
+    assert_eq!(next_u16, 257);
+    assert_eq!(offset, 4);
+}
+
+#[test]
+#[should_panic]
+fn get_u16_but_out_of_bounds() {
+    let buffer: Vec<u8> = vec![0, 0, 1, 0];
+    let mut offset: usize = 4;
+    let _: u16 = read_u16(&buffer, &mut offset);
+}
+
+#[test]
+fn get_u32_and_update_offset() {
+    let buffer: Vec<u8> = vec![1, 1, 1, 1];
+    let mut offset: usize = 0;
+
+    let next_u32: u32 = read_u32(&buffer, &mut offset);
+    assert_eq!(next_u32, 16843009);
+    assert_eq!(offset, 4);
+}
+
+#[test]
+#[should_panic]
+fn get_u32_but_out_of_bounds() {
+    let buffer: Vec<u8> = vec![0, 0, 1, 0];
+    let mut offset: usize = 4;
+    let _: u32 = read_u32(&buffer, &mut offset);
+}
